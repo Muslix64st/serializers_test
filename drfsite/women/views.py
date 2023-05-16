@@ -11,20 +11,23 @@ from .serializers import WomenSerializer
 class WomenAPIView(APIView):
     def get(self, request):
         women = Women.objects.all()
-        serializer = WomenSerializer(women, many=True)
-        return Response(serializer.data)
+        # serializer = WomenSerializer(women, many=True)
+        return Response(WomenSerializer(women, many=True).data)
 
         # lst = Women.objects.all().values()
         # return Response({'post get': list(lst)})
 
 
     def post(self, request):
+        serializer = WomenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         post_new = Women.objects.create(
             title=request.data['title'],
             content=request.data['content'],
             cat_id=request.data['cat_id'],
         )
-        return Response({'post': model_to_dict(post_new)})
+        return Response({'post': WomenSerializer(post_new).data})
 
 
     # def put(self, request):
